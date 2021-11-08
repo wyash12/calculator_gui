@@ -28,6 +28,14 @@ class Calculator:
         self.create_digit_buttons()
         self.create_operator_buttons()
         self.create_special_buttons()
+        self.bind_keys()
+
+    def bind_keys(self):
+        self.root.bind("<Return>", lambda event: self.evaluate())
+        for i in self.digits:
+            self.root.bind(str(i),lambda event ,digit= i: self.add_to_expression(digit))
+        for j in self.operations:
+            self.root.bind(j, lambda event ,opertor=j: self.append_operator(opertor))
 
     def create_special_buttons(self):
         self.create_clear_button()
@@ -103,10 +111,14 @@ class Calculator:
     def evaluate(self):
         self.total_expression+=self.current_expression
         self.update_total_label()
+        try:
+            self.current_expression = str(eval(self.total_expression))
 
-        self.current_expression = str(eval(self.total_expression))
-        self.total_expression=""
-        self.update_label()
+            self.total_expression=""
+        except Exception as e:
+            self.current_expression = "Error"
+        finally:
+            self.update_label()
 
     def create_equals_button(self):
         button = tk.Button(self.button_frame, text="=", bg="#CCEDFF" ,fg="#25265E",font=("Arial", 20),
@@ -119,13 +131,13 @@ class Calculator:
         return frame
 
     def update_total_label(self):
-        self.total_label.config(text=self.total_expression)
+        expression = self.total_expression
+        for operator, symbol in self.operations.items():
+            expression = expression.replace(operator,f' {symbol} ')
+        self.total_label.config(text=expression)
 
     def update_label(self):
-        expression = self.total_expression
-        for operator ,symbol in self.operations.items():
-            expression=expression.replace(operator, f'{symbol}')
-        self.label.config(text= self.current_expression)
+        self.label.config(text= self.current_expression[:11])
 
     def run(self):
         self.root.mainloop()
