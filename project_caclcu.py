@@ -8,8 +8,8 @@ class Calculator:
         self.root.resizable(0, 0)
         self.root.title("calculator")
 
-        self.total_expression = "0"
-        self.current_expression = "0"
+        self.total_expression = ""
+        self.current_expression = ""
         self.display_frame = self.create_display_frame()
         self.digits = {
             7: (1, 1), 8: (1, 2), 9: (1, 3),
@@ -46,11 +46,13 @@ class Calculator:
         frame = tk.Frame(self.root, height=221, bg="#F5F5F5")
         frame.pack(expand=True, fill="both")
         return frame
-
+    def add_to_expression(self,value):
+        self.current_expression += str(value)
+        self.update_label()
     def create_digit_buttons(self):
         for digit ,grid_value in self.digits.items():
             buttons = tk.Button(self.button_frame, text=str(digit), bg="#FFFFFF",fg="#25265E",
-                               font=("Arial", 24, "bold"), borderwidth=0)
+                               font=("Arial", 24, "bold"), borderwidth=0 , command=lambda x=digit: self.add_to_expression(x))
             buttons.grid(row=grid_value[0], column=grid_value[1], sticky=tk.NSEW)
     def create_operator_buttons(self):
         i=0
@@ -79,6 +81,11 @@ class Calculator:
         frame = tk.Frame(self.root)
         frame.pack(expand=True, fill="both")
         return frame
+    def update_total_label(self):
+        self.total_label.config(text=self.total_expression)
+
+    def update_label(self):
+        self.label.config(text= self.current_expression)
 
     def run(self):
         self.root.mainloop()
