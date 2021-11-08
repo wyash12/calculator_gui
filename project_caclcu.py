@@ -32,6 +32,8 @@ class Calculator:
     def create_special_buttons(self):
         self.create_clear_button()
         self.create_equals_button()
+        self.create_sqrt_button()
+        self.create_square_button()
 
     def create_display_label(self):
         total_label = tk.Label(self.display_frame, text=self.total_expression, anchor=tk.E, bg="#F5F5F5",
@@ -77,8 +79,26 @@ class Calculator:
 
     def create_clear_button(self):
         button = tk.Button(self.button_frame, text="C", bg="#F8FAFF" ,fg="#25265E",font=("Arial", 20),
-                           borderwidth=0, command = self.clear() )
-        button.grid(row=0, column=1,columnspan=3, sticky=tk.NSEW)
+                           borderwidth=0, command = self.clear)
+        button.grid(row=0, column=1, sticky=tk.NSEW)
+
+    def square(self):
+        self.current_expression = str(eval(f"{self.current_expression}**2"))
+        self.update_label()
+
+    def create_square_button(self):
+        button = tk.Button(self.button_frame, text="x\u00b2", bg="#F8FAFF" ,fg="#25265E",font=("Arial", 20),
+                           borderwidth=0, command = self.square)
+        button.grid(row=0, column=2, sticky=tk.NSEW)
+
+    def sqrt(self):
+        self.current_expression = str(eval(f"{self.current_expression}**0.5"))
+        self.update_label()
+
+    def create_sqrt_button(self):
+        button = tk.Button(self.button_frame, text="\u221ax", bg="#F8FAFF" ,fg="#25265E",font=("Arial", 20),
+                           borderwidth=0, command = self.square)
+        button.grid(row=0, column=3, sticky=tk.NSEW)
 
     def evaluate(self):
         self.total_expression+=self.current_expression
@@ -102,6 +122,9 @@ class Calculator:
         self.total_label.config(text=self.total_expression)
 
     def update_label(self):
+        expression = self.total_expression
+        for operator ,symbol in self.operations.items():
+            expression=expression.replace(operator, f'{symbol}')
         self.label.config(text= self.current_expression)
 
     def run(self):
