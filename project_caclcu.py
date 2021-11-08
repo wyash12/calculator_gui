@@ -54,33 +54,50 @@ class Calculator:
             buttons = tk.Button(self.button_frame, text=str(digit), bg="#FFFFFF",fg="#25265E",
                                font=("Arial", 24, "bold"), borderwidth=0 , command=lambda x=digit: self.add_to_expression(x))
             buttons.grid(row=grid_value[0], column=grid_value[1], sticky=tk.NSEW)
+
+    def append_operator(self,operator):
+        self.current_expression+= operator
+        self.total_expression+= self.current_expression
+        self.current_expression = ""
+        self.update_total_label()
+        self.update_label()
+
     def create_operator_buttons(self):
         i=0
         for operator,symbol in self.operations.items():
-            buttons=tk.Button(self.button_frame, text=symbol,bg="#F8FAFF" ,fg="#25265E",font=("Arial", 20),borderwidth=0)
+            buttons=tk.Button(self.button_frame, text=symbol,bg="#F8FAFF" ,fg="#25265E",font=("Arial", 20),borderwidth=0,command=lambda x=operator: self.append_operator(x))
             buttons.grid(row=i,column=4,sticky=tk.NSEW)
             i+=1
 
-    # def clear(self):
-    #     self.current_expression = ""
-    #     self.total_expression = ""
-    #     self.update_label()
-    #     self.update_total_label()
+    def clear(self):
+        self.current_expression = ""
+        self.total_expression = ""
+        self.update_label()
+        self.update_total_label()
 
     def create_clear_button(self):
         button = tk.Button(self.button_frame, text="C", bg="#F8FAFF" ,fg="#25265E",font=("Arial", 20),
-                           borderwidth=0)
+                           borderwidth=0, command = self.clear() )
         button.grid(row=0, column=1,columnspan=3, sticky=tk.NSEW)
+
+    def evaluate(self):
+        self.total_expression+=self.current_expression
+        self.update_total_label()
+
+        self.current_expression = str(eval(self.total_expression))
+        self.total_expression=""
+        self.update_label()
 
     def create_equals_button(self):
         button = tk.Button(self.button_frame, text="=", bg="#CCEDFF" ,fg="#25265E",font=("Arial", 20),
-                           borderwidth=0)
+                           borderwidth=0, command=self.evaluate)
         button.grid(row=4, column=3,columnspan=2, sticky=tk.NSEW)
 
     def create_buttons_frame(self):
         frame = tk.Frame(self.root)
         frame.pack(expand=True, fill="both")
         return frame
+
     def update_total_label(self):
         self.total_label.config(text=self.total_expression)
 
